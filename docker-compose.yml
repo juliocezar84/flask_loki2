@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./logs:/var/logs  # Certifique-se de que o Flask escreve os logs neste diretório
+      - ./promtail-config.yaml:/etc/promtail/promtail.yaml
+    depends_on:
+      - loki
+    command: -config.file=/etc/promtail/promtail.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - loki
+
+volumes:
+  grafana_data: {}

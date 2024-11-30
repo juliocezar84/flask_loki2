@@ -56,15 +56,20 @@ def metrics():
 # Endpoint para devolver todos as pessoas cadastradas
 @app.route('/')
 def home():
+    '''
     log_message('info', 'This is an INFO message')
     log_message('debug', 'This is a DEBUG message')
     log_message('warning', 'This is a WARNING message')
     log_message('error', 'This is an ERROR message')
     log_message('critical', 'This is a CRITICAL message')
+
+    '''
+    log_message('info', '/')
     return "API de pessoas"
 
 @app.route('/pessoas', methods=['GET'])
 def pessoas():
+    log_message('info', '/pessoas')
     try:
         with sqlite3.connect('crud.db') as conn:
             conn.row_factory = sqlite3.Row
@@ -73,10 +78,12 @@ def pessoas():
             result = cursor.fetchall()
             return json.dumps([dict(ix) for ix in result]), 200
     except Exception as e:
+        log_message('error', '/pessoas')
         return jsonify(error=str(e)), 500
 
 @app.route('/pessoa/<cpf>', methods=['GET', 'DELETE'])
 def pessoa_por_cpf(cpf):
+    log_message('info', '/pessoa/' + str(cpf))
     try:
         with sqlite3.connect('crud.db') as conn:
             conn.row_factory = sqlite3.Row
@@ -94,10 +101,14 @@ def pessoa_por_cpf(cpf):
                 conn.commit()
                 return jsonify(success="Pessoa deletada com sucesso"), 200
     except Exception as e:
+        log_message('error', '/pessoa/' + str(cpf))
         return jsonify(error=str(e)), 500
 
 @app.route('/pessoa', methods=['POST'])
 def insere_atualiza_pessoa():
+
+    log_message('info', '/pessoa POST')
+
     data = request.get_json(force=True)
     nome = data.get('nome')
     sobrenome = data.get('sobrenome')
@@ -118,6 +129,7 @@ def insere_atualiza_pessoa():
             conn.commit()
             return jsonify(success="Pessoa inserida com sucesso"), 201
     except Exception as e:
+        log_message('error', '/pessoa/POST')
         return jsonify(error=str(e)), 500
 
 if __name__ == "__main__":

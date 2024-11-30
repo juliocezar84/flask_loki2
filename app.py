@@ -103,6 +103,7 @@ def insere_atualiza_pessoa():
     sobrenome = data.get('sobrenome')
     cpf = data.get('cpf')
     datanascimento = data.get('data_nascimento')
+
     try:
         with sqlite3.connect('crud.db') as conn:
             conn.row_factory = sqlite3.Row
